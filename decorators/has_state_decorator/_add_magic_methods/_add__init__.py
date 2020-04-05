@@ -1,33 +1,31 @@
-old_init_method = some_class.__init__
+import classier.decorators.has_state_decorator.options.ATTRIBUTE_OPTIONS as ATTRIBUTE_OPTIONS
+from classier.decorators.has_state_decorator._add_state_methods._add_from_pointer import _get_from_pointer
+from classier.decorators import _MARK_ATTRIBUTE_NAME
+from classier.decorators.has_state_decorator import _MARK_TYPE_NAME
+from classier.objects import ClassMarker
+import classier.utils as utils
 
 
-def new_init_method(self):
-    setattr(self, state_attribute_name, default_state.copy())
-    old_init_method(self)
+def _add__init__(some_class, options):
+    state_attribute_name = ATTRIBUTE_OPTIONS.ATTRIBUTE_NAME_STATE.get_option(options)
+    default_state = ATTRIBUTE_OPTIONS.ATTRIBUTE_VALUE_DEFAULT_STATE.get_option(options)
 
+    old__init__ = some_class.__init__
+    from_pointer = _get_from_pointer(options)
 
-if method_name_from is not None:
-    def from_pointer(self, pointer):
-        if isinstance(pointer, dict):
-            self.state = pointer
-        elif isinstance(pointer, str) and os.path.exists(pointer):
-            self.state = read_state_from_file(pointer)
-            if file_to_state is not None:
-                self.state = file_to_state(self.state)
-        elif has_indexed_state(self):
-            self.state = get_state_from_index(self)
-        elif default is not None:
-            default(self, pointer)
-        else:
-            raise ValueError(f"Could not initialize from {pointer} of type {type(pointer)}")
-        return self
-    setattr(some_class, method_name_from, from_pointer)
+    def new__init__(self, *args, **kwargs):
+        pointer = kwargs.get("pointer")
+        # if pointer is None and len(args) == 1 and (isinstance(pointer, str) or isinstance(pointer, dict)):
+        #     pointer = args[0]
 
-
-    def new_init_method(self, pointer=None):
-        setattr(self, state_attribute_name, default_state.copy())
-        old_init_method(self)
         if pointer is not None:
-            from_pointer(self, pointer)
+            from_pointer(self, pointer, default=lambda p: default_state.copy())
+        else:
+            setattr(self, state_attribute_name, default_state.copy())
+            utils.convenience.call(old__init__, args=(self, *args), kwargs=kwargs)
 
-some_class.__init__ = new_init_method
+    method_name_init = "__init__"
+    if not ClassMarker.does_mark_exist(some_class, _MARK_ATTRIBUTE_NAME, _MARK_TYPE_NAME, method_name_init):
+        ClassMarker.add_mark_to_class(some_class, _MARK_ATTRIBUTE_NAME, _MARK_TYPE_NAME, method_name_init)
+        some_class = utils.convenience.add_mixin(some_class, new__init__, method_name_init)
+    return some_class

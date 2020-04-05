@@ -1,28 +1,46 @@
-from classier.decorators.has_state_decorator._index_methods._read_state_file import read_state_file
-from classier.decorators.has_state_decorator._index_methods._get_indexed_state import get_indexed_state
-import os
+from classier.decorators.has_state_decorator.options import ATTRIBUTE_OPTIONS
+from classier.decorators.has_state_decorator.options import METHOD_OPTIONS
+import classier.utils as utils
 
 
-def _get_from_pointer(id_getter, index_file_path,
-                      file_to_state=None, default=None):
-    def from_pointer(self, pointer):
+def _get_from_pointer(options):
+    pointer_to_state = METHOD_OPTIONS.METHOD_POINTER_TO_STATE.get_option(options)
+    pointer_exists = METHOD_OPTIONS.METHOD_POINTER_EXISTS.get_option(options)
+    saver = METHOD_OPTIONS.METHOD_SAVER.get_option(options)
+
+    state_attribute_name = ATTRIBUTE_OPTIONS.ATTRIBUTE_NAME_STATE.get_option(options)
+
+    saver = METHOD_OPTIONS.METHOD_SAVER.get_option(options)
+    index = METHOD_OPTIONS.METHOD_INDEX.get_option(options)
+    index_path = METHOD_OPTIONS.PATH_INDEX.get_option(options)
+
+    def from_pointer(self, pointer, default=None):
+        setattr(self, state_attribute_name, None)
+
+        index_information = None
+        if index is not None:
+            index_information = index(pointer, type(self), index_path)
+
         if isinstance(pointer, dict):
-            self.state = pointer
-        elif isinstance(pointer, str) and os.path.exists(pointer):
-            self.state = read_state_file(pointer)
-            if file_to_state is not None:
-                self.state = file_to_state(self.state)
-        elif get_indexed_state(self, id_getter, index_file_path) is not None:
-            self.state = get_indexed_state(self, id_getter, index_file_path)
-        elif default is not None:
-            default(self, pointer)
-        else:
+            setattr(self, state_attribute_name, pointer)
+        elif isinstance(pointer, str) and pointer_exists(pointer):
+            if pointer_to_state is not None:
+                state = pointer_to_state(pointer)
+            else:
+                state = saver.get(pointer, index_information)
+            setattr(self, state_attribute_name, state)
+
+        if getattr(self, state_attribute_name, None) is None and default is not None:
+            setattr(self, state_attribute_name, default(pointer))
+
+        if getattr(self, state_attribute_name, None) is None:
             raise ValueError(f"Could not initialize from {pointer} of type {type(pointer)}")
+
         return self
     return from_pointer
 
 
-def _add_from_pointer(some_class, id_getter, index_file_path,
-                      method_name_from_pointer="from_pointer", file_to_state=None, default=None):
-    setattr(some_class, method_name_from_pointer, _get_from_pointer(id_getter, index_file_path,
-                                                                    file_to_state=file_to_state, default=default))
+def _add_from_pointer(some_class, options):
+    method_name_from_pointer = METHOD_OPTIONS.METHOD_NAME_FROM_POINTER.get_option(options)
+    some_class = utils.convenience.add_mixin(some_class, _get_from_pointer(options), method_name_from_pointer)
+    return some_class
