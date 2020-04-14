@@ -31,7 +31,7 @@ def _get_from_pointer(options):
             setattr(self, state_attribute_name, state)
 
         if getattr(self, state_attribute_name, None) is None and default is not None:
-            setattr(self, state_attribute_name, default(pointer))
+            setattr(self, state_attribute_name, default(self, pointer))
 
         if getattr(self, state_attribute_name, None) is None:
             raise ValueError(f"Could not initialize from {pointer} of type {type(pointer)}")
