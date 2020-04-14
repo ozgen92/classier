@@ -4,10 +4,11 @@ from classier.objects import ClassMarker
 from classier.decorators import _MARK_ATTRIBUTE_NAME
 from classier.decorators.has_state_decorator import _MARK_TYPE_NAME
 import classier.utils as utils
+import json
 
 
 def _get_from_pointer(options):
-    pointer_to_state = METHOD_OPTIONS.METHOD_POINTER_TO_STATE.get_option(options)
+    state_transformer = METHOD_OPTIONS.METHOD_STATE_TRANSFORMER.get_option(options)
     pointer_exists = METHOD_OPTIONS.METHOD_POINTER_EXISTS.get_option(options)
     saver = METHOD_OPTIONS.METHOD_SAVER.get_option(options)
 
@@ -26,21 +27,26 @@ def _get_from_pointer(options):
         if index is not None:
             index_information = index(pointer, type(self), index_path)
 
+        state = None
         if isinstance(pointer, dict):
-            setattr(self, state_attribute_name, pointer)
+            state = pointer
         elif isinstance(pointer, str) and pointer_exists(pointer):
-            if pointer_to_state is not None:
-                state = pointer_to_state(pointer)
-            else:
-                state = saver.get(pointer, index_information)
-            setattr(self, state_attribute_name, state)
+            # pointer could be something saver knows
+            state = utils.convenience.optional(lambda: saver.get(pointer, index_information))
 
-        if getattr(self, state_attribute_name, None) is None and default is not None:
-            setattr(self, state_attribute_name, default(pointer))
+            # pointer could be json.dumps
+            if state is None:
+                state = utils.convenience.optional(lambda: json.loads(pointer))
+
+        if state is None and default is not None:
+            state = default(pointer)
 
         if getattr(self, state_attribute_name, None) is None:
             raise ValueError(f"Could not initialize from {pointer} of type {type(pointer)}")
 
+        if state_transformer is not None:
+            state = state_transformer(state)
+        setattr(self, state_attribute_name, state)
         return self
     return from_pointer
 

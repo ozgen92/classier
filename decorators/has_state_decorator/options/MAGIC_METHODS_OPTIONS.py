@@ -13,3 +13,6 @@ OPTION_WITH__INIT__ = Option("OPTION_WITH__INIT__", True)
 OPTION_WITH__SETITEM__ = Option("OPTION_WITH__SETITEM__", True)
 OPTION_WITH__GETITEM__ = Option("OPTION_WITH__GETITEM__", True)
 OPTION_WITH__DELITEM__ = Option("OPTION_WITH__DELITEM__", True)
+
+__INIT__ARGUMENT_NAME_POINTER = Option("__INIT__ARGUMENT_NAME_POINTER", "_pointer")
+__INIT__METHOD_POST_POINTER_INIT = Option("__INIT__METHOD_POST_POINTER_INIT", None)  # fn(self, pointer), called after __init__ with_pointer if exists

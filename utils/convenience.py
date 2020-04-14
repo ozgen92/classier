@@ -8,6 +8,13 @@ def set_default(val, default, when=None):
         return val
 
 
+def optional(some_fn, default=None):
+    try:
+        return some_fn()
+    except:
+        return default
+
+
 def add_mixin(some_class, some_fn, fn_name):
     new_class = type(some_class.__name__, (some_class,), {
         fn_name: some_fn
