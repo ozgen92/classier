@@ -10,6 +10,7 @@ class Option:
         :param options: options can be a list of Option classes or a dictionary
         :return: the opted value or default
         """
+        options = self.options_to_names(options)  # in case {Option: value, ...} exist
         if isinstance(options, dict):
             opted_value = options.get(self.name, self)
             if isinstance(opted_value, Option):
@@ -25,6 +26,16 @@ class Option:
                     return option.value
         # if we are here, I dont know what it is, just return the default
         return self.value
+
+    @staticmethod
+    def options_to_names(options):
+        new_options = {}
+        for key, value in options:
+            if isinstance(key, Option):
+                new_options[key.name] = value
+            else:
+                new_options[key] = value
+        return new_options
 
     @staticmethod
     def with_kwargs(options, kwargs):
