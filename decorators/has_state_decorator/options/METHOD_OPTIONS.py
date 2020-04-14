@@ -18,7 +18,7 @@ METHOD_NAME_GET_ID = Option("METHOD_NAME_SAVE_STATE", "get_id")
 """
 Below sets the default methods used, that will be added by has_state_decorator
 """
-METHOD_GET_PATH = Option("METHOD_GET_PATH", lambda some_object: f"./states/{type(some_object).__name__}")  # object -> save path
+METHOD_GET_PATH = Option("METHOD_GET_PATH", lambda some_object: os.path.join("states", type(some_object).__name__))  # object -> save path
 METHOD_GET_ID = Option("GET_ID", None)  # required for indexing
 METHOD_SAVER = Option("METHOD_SAVER", FileSaver)
 METHOD_INDEX = Option("METHOD_INDEX", FileIndex)
