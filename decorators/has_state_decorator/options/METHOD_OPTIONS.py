@@ -22,6 +22,7 @@ METHOD_GET_PATH = Option("METHOD_GET_PATH", lambda some_object: os.path.join("st
 METHOD_GET_ID = Option("GET_ID", None)  # required for indexing
 METHOD_SAVER = Option("METHOD_SAVER", FileSaver)
 METHOD_INDEX = Option("METHOD_INDEX", FileIndex)
+METHOD_POINTER_DEFAULT = Option("METHOD_POINTER_DEFAULT", None)
 METHOD_POINTER_TO_STATE = Option("METHOD_POINTER_TO_STATE", None)
 METHOD_POINTER_EXISTS = Option("METHOD_POINTER_EXISTS", os.path.exists)
 

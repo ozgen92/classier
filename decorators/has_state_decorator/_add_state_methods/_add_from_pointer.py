@@ -16,9 +16,11 @@ def _get_from_pointer(options):
     saver = METHOD_OPTIONS.METHOD_SAVER.get_option(options)
     index = METHOD_OPTIONS.METHOD_INDEX.get_option(options)
     index_path = METHOD_OPTIONS.PATH_INDEX.get_option(options)
+    from_pointer_default = METHOD_OPTIONS.METHOD_POINTER_DEFAULT.get_option(options)
 
     def from_pointer(self, pointer, default=None):
         setattr(self, state_attribute_name, None)
+        default = utils.convenience.set_default(default, from_pointer_default)
 
         index_information = None
         if index is not None:
