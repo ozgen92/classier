@@ -28,5 +28,6 @@ def apply(some_class, options):
     if MAGIC_METHODS_OPTIONS.OPTION_WITH__EQ__.get_option(options):
         some_class = _add__eq__(some_class, options)
 
-    some_class = _add__init__(some_class, options)
+    if MAGIC_METHODS_OPTIONS.OPTION_WITH__INIT__.get_option(options):
+        some_class = _add__init__(some_class, options)
     return some_class
