@@ -4,6 +4,7 @@ from classier.decorators import _MARK_ATTRIBUTE_NAME
 from classier.decorators.has_state_decorator import _MARK_TYPE_NAME
 from classier.objects import ClassMarker
 import classier.utils as utils
+import copy
 
 
 def _add__init__(some_class, options):
@@ -18,10 +19,11 @@ def _add__init__(some_class, options):
         # if pointer is None and len(args) == 1 and (isinstance(pointer, str) or isinstance(pointer, dict)):
         #     pointer = args[0]
 
+        copied_default_state = copy.deepcopy(default_state)
         if pointer is not None:
-            from_pointer(self, pointer, default=lambda p: default_state.copy())
+            from_pointer(self, pointer, default=lambda p: copied_default_state)
         else:
-            setattr(self, state_attribute_name, default_state.copy())
+            setattr(self, state_attribute_name, copied_default_state)
             utils.convenience.call(old__init__, args=(self, *args), kwargs=kwargs)
 
     method_name_init = "__init__"
