@@ -22,14 +22,12 @@ def _add__init__(some_class, options):
 
     def new__init__(self, *args, **kwargs):
         pointer = kwargs.get(pointer_name)
-        # if pointer is None and len(args) == 1 and (isinstance(pointer, str) or isinstance(pointer, dict)):
-        #     pointer = args[0]
 
         copied_default_state = copy.deepcopy(default_state)
-        if pointer is not None and len(args) == 0 and len(kwargs) == 1 and pointer_name not in old__init__parameters:
+        if pointer is not None and pointer_name not in old__init__parameters:
             from_pointer(self, pointer, default=lambda p: copied_default_state)
             if post_pointer_init is not None:
-                post_pointer_init(self, pointer)
+                utils.convenience.call(post_pointer_init, args=(self, *args), kwargs=kwargs)
         else:
             setattr(self, state_attribute_name, copied_default_state)
             utils.convenience.call(old__init__, args=(self, *args), kwargs=kwargs)
