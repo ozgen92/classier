@@ -20,6 +20,9 @@ def _get_from_pointer(options):
     from_pointer_default = METHOD_OPTIONS.METHOD_POINTER_DEFAULT.get_option(options)
 
     def from_pointer(self, pointer, default=None):
+        if isinstance(pointer, self):
+            return pointer
+
         setattr(self, state_attribute_name, None)
         default = utils.convenience.set_default(default, from_pointer_default)
 

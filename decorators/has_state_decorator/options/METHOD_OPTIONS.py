@@ -9,6 +9,7 @@ If you don't want a specific method below, just set its value to None
 """
 
 METHOD_NAME_SAVE_STATE = Option("METHOD_NAME_SAVE_STATE", "save_state")
+METHOD_NAME_UPDATE_STATE = Option("METHOD_NAME_UPDATE_STATE", "update_state")
 METHOD_NAME_GET_STATE = Option("METHOD_NAME_SAVE_STATE", "get_state")
 METHOD_NAME_DEL_STATE = Option("METHOD_NAME_SAVE_STATE", "del_state")
 METHOD_NAME_FROM_POINTER = Option("METHOD_NAME_SAVE_STATE", "from_pointer")
