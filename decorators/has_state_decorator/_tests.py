@@ -15,5 +15,5 @@ print(f"{str(x1)}, {len(x1)}")
 x1 = a(pointer=x1["_state_file"])
 del x1["x"]
 print(f"{x1.get_state()}, {len(x1)}")
-x1.del_state()
-x2.del_state()
+x1.delete_state()
+x2.delete_state()

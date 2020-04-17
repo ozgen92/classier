@@ -1,6 +1,7 @@
 from classier.decorators.has_state_decorator._add_state_methods._add_from_pointer import _add_from_pointer
 from classier.decorators.has_state_decorator._add_state_methods._add_del_state import _add_del_state
 from classier.decorators.has_state_decorator._add_state_methods._add_get_state import _add_get_state
+from classier.decorators.has_state_decorator._add_state_methods._add_get_state_path import _add_get_state_path
 from classier.decorators.has_state_decorator._add_state_methods._add_save_state import _add_save_state
 from classier.decorators.has_state_decorator._add_state_methods._add_update_state import _add_update_state
 from classier.decorators.has_state_decorator.options import METHOD_OPTIONS
@@ -12,6 +13,9 @@ def apply(some_class, options):
 
     if METHOD_OPTIONS.METHOD_NAME_GET_STATE.get_option(options) is not None:
         some_class = _add_get_state(some_class, options)
+
+    if METHOD_OPTIONS.METHOD_NAME_GET_STATE_PATH.get_option(options) is not None:
+        some_class = _add_get_state_path(some_class, options)
 
     if METHOD_OPTIONS.METHOD_NAME_SAVE_STATE.get_option(options) is not None:
         some_class = _add_save_state(some_class, options)
