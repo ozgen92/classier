@@ -30,7 +30,7 @@ class Option:
     @staticmethod
     def options_to_names(options):
         new_options = {}
-        for key, value in options:
+        for key, value in options.items():
             if isinstance(key, Option):
                 new_options[key.name] = value
             else:

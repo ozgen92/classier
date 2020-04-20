@@ -44,7 +44,7 @@ class PersistentDict:
         keys, data, current = self.get_subkey(keys, fill_empty=True)
         key = str(keys[-1])
         val = current.get(key, default)
-        if decrypt:
+        if decrypt and val is not None:
             assert isinstance(val, str)
             val = self.decrypt(val)
         return val
