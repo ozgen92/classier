@@ -1,12 +1,59 @@
+import datetime
 import inspect
 
-
 def set_default(val, default, when=None):
-    if when is None and val is when or val == when:
-        return default
+    if when is None:
+        if val is None:
+            return default
+        else:
+            return val
     else:
-        return val
+        if when(val):
+            return default
+        else:
+            return val
 
+
+def parse_timestamp(time):
+    if isinstance(time, datetime.datetime):
+        return time
+    formats_to_try = [
+        "%Y-%m-%dT%H:%M:%S.%fZ",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d",
+        "%Y-%m-%d %H:%M:%S,%f",
+        "%d-%m-%Y",
+    ]
+    for format in formats_to_try:
+        try:
+            return datetime.datetime.strptime(time, format)
+        except:
+            pass
+
+    try:
+        return datetime.datetime.utcfromtimestamp(int(time)/1000)
+    except:
+        pass
+
+    raise ValueError(f"Unrecognized format {time}")
+
+
+def round_date(date, round_up=False):
+    rounded = datetime.datetime.strptime(date.strftime("%d-%m-%Y"), "%d-%m-%Y")
+    if round_up:
+        rounded = rounded + datetime.timedelta(days=1)
+    return rounded
+
+
+convert_seconds_to = {
+    "us": 10**6,
+    "ms": 10**3,
+    "s": 1,
+    "m": 1/60,
+    "h": 1/3600,
+}
 
 def optional(some_fn, default=None):
     try:

@@ -30,7 +30,7 @@ class PersistentDict:
     def read(self) -> dict:
         """returns the content of self.file"""
         with locks.ReadLock(self.file), open(self.file, "r") as f:
-                return json.loads(f.read())
+            return json.loads(f.read())
 
     def save(self, data: dict) -> None:
         dir_name = os.path.dirname(self.file)
@@ -41,7 +41,7 @@ class PersistentDict:
                 json.dump(data, f, ensure_ascii=False, indent=4, sort_keys=True)
 
     def get(self, keys, default: object=None, decrypt=False):
-        keys, data, current = self.get_subkey(keys, fill_empty=True)
+        keys, data, current = self._get_subkey(keys, fill_empty=True)
         key = str(keys[-1])
         val = current.get(key, default)
         if decrypt and val is not None:
@@ -50,7 +50,7 @@ class PersistentDict:
         return val
 
     def delete(self, keys) -> dict:
-        keys, data, current = self.get_subkey(keys, fill_empty=False)
+        keys, data, current = self._get_subkey(keys, fill_empty=False)
         key = str(keys[-1])
 
         if current is not None and key in current:
@@ -59,7 +59,7 @@ class PersistentDict:
         return data
 
     def set(self, keys, val, encrypt=False) -> dict:
-        keys, data, current = self.get_subkey(keys, fill_empty=True)
+        keys, data, current = self._get_subkey(keys, fill_empty=True)
         if encrypt:
             assert isinstance(val, str)
             val = self.encrypt(val)
@@ -70,11 +70,11 @@ class PersistentDict:
         return data
 
     def contains(self, keys) -> bool:
-        keys, data, current = self.get_subkey(keys)
+        keys, data, current = self._get_subkey(keys)
         key = str(keys[-1])
         return key in self.read()
 
-    def get_subkey(self, keys, fill_empty=False):
+    def _get_subkey(self, keys, fill_empty=False):
         data = self.read()
         if isinstance(keys, str):
             keys = (keys,)
