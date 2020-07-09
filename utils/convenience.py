@@ -64,7 +64,7 @@ def optional(some_fn, default=None):
 
 
 def add_mixin(some_class, some_fn, fn_name):
-    if hasattr(some_class, fn_name):
+    if hasattr(some_class, fn_name) and not (fn_name.startswith("__") and fn_name.endswith("__")):
         raise AttributeError(f"{some_class.__name__} already has {fn_name} implemented!")
     new_class = type(some_class.__name__, (some_class,), {
         fn_name: some_fn
