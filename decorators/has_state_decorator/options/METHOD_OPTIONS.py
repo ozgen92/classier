@@ -11,6 +11,7 @@ If you don't want a specific method below, just set its value to None
 METHOD_NAME_SAVE_STATE = Option("METHOD_NAME_SAVE_STATE", "save_state")
 METHOD_NAME_UPDATE_STATE = Option("METHOD_NAME_UPDATE_STATE", "update_state")
 METHOD_NAME_GET_STATE = Option("METHOD_NAME_GET_STATE", "get_state")
+METHOD_NAME_DOES_STATE_EXIST = Option("METHOD_NAME_DOES_STATE_EXIST", "does_state_exist")
 METHOD_NAME_GET_STATE_PATH = Option("METHOD_NAME_GET_STATE_PATH", "get_state_path")
 METHOD_NAME_DEL_STATE = Option("METHOD_NAME_DEL_STATE", "delete_state")
 METHOD_NAME_FROM_POINTER = Option("METHOD_NAME_FROM_POINTER", "from_pointer")

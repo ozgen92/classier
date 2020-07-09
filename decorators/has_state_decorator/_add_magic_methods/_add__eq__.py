@@ -12,7 +12,7 @@ def _add__eq__(some_class, options):
         try:
             get_id_self = getattr(self, get_id_name)
             get_id_other = getattr(other, get_id_name)
-            return get_id_self(self) == get_id_other(other)
+            return get_id_self() == get_id_other()
         except:
             return False
 

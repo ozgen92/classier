@@ -27,10 +27,11 @@ def _add__init__(some_class, options):
 
         copied_default_state = copy.deepcopy(default_state)
         # pass any other supplementary information to default function if needed
-        default = utils.convenience.set_default(lambda p: utils.convenience.call(from_pointer_default,
-                                                                                 args=(p, *args),
-                                                                                 kwargs=kwargs),
-                                                lambda p: copied_default_state)
+        def default(p):
+            val = utils.convenience.call(from_pointer_default,
+                                         args=args,
+                                         kwargs=kwargs)
+            return utils.convenience.set_default(val, copied_default_state)
         if pointer is not None and pointer_name not in old__init__parameters:
             from_pointer(self, pointer, default=default)
             if post_pointer_init is not None:

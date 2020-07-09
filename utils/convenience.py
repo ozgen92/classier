@@ -18,6 +18,7 @@ def parse_timestamp(time):
     if isinstance(time, datetime.datetime):
         return time
     formats_to_try = [
+        "%Y-%m-%dT%H:%M:%S.%f+00:00",
         "%Y-%m-%dT%H:%M:%S.%fZ",
         "%Y-%m-%dT%H:%M:%S.%f",
         "%Y-%m-%dT%H:%M:%SZ",
@@ -63,6 +64,8 @@ def optional(some_fn, default=None):
 
 
 def add_mixin(some_class, some_fn, fn_name):
+    if hasattr(some_class, fn_name):
+        raise AttributeError(f"{some_class.__name__} already has {fn_name} implemented!")
     new_class = type(some_class.__name__, (some_class,), {
         fn_name: some_fn
     })
@@ -77,12 +80,20 @@ def call(fn, args=None, kwargs=None):
     parameters = signature.parameters
     args_index = 0
     to_pass = {}
+
+    # first pass kwargs
     for expected_arg in parameters.keys():
         if expected_arg in kwargs.keys():
             to_pass[expected_arg] = kwargs[expected_arg]
-        else:
+
+    # then start passing arguments one by one in order
+    for expected_arg in parameters.keys():
+        # first check if argument is already passed
+        if expected_arg in to_pass.keys():
+            continue
+        if len(args) > args_index:
             to_pass[expected_arg] = args[args_index]
             args_index += 1
         if args_index == len(args):
             break
-    fn(**to_pass)
+    return fn(**to_pass)

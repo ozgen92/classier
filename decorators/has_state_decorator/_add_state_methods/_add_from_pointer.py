@@ -9,7 +9,7 @@ import json
 
 def _get_from_pointer(options):
     state_transformer = METHOD_OPTIONS.METHOD_STATE_TRANSFORMER.get_option(options)
-    pointer_exists = METHOD_OPTIONS.METHOD_POINTER_EXISTS.get_option(options)
+    pointer_exists = METHOD_OPTIONS.METHOD_POINTER_EXISTS.get_option(options)  # TODO: remove?
     saver = METHOD_OPTIONS.METHOD_SAVER.get_option(options)
 
     state_attribute_name = ATTRIBUTE_OPTIONS.ATTRIBUTE_NAME_STATE.get_option(options)
@@ -20,7 +20,8 @@ def _get_from_pointer(options):
     from_pointer_default = METHOD_OPTIONS.METHOD_POINTER_DEFAULT.get_option(options)
 
     def from_pointer(self, pointer, default=None):
-        if isinstance(pointer, self):
+        if isinstance(pointer, type(self)):
+            setattr(self, state_attribute_name, getattr(pointer, state_attribute_name))
             return pointer
 
         setattr(self, state_attribute_name, None)
@@ -33,18 +34,20 @@ def _get_from_pointer(options):
         state = None
         if isinstance(pointer, dict):
             state = pointer
-        elif isinstance(pointer, str) and pointer_exists(pointer):
-            # pointer could be something saver knows
-            state = utils.convenience.optional(lambda: saver.get(pointer, index_information))
+        # TODO: add debug logs here
 
+        if state is None and isinstance(pointer, str):
             # pointer could be json.dumps
-            if state is None:
-                state = utils.convenience.optional(lambda: json.loads(pointer))
+            state = utils.convenience.optional(lambda: json.loads(pointer))
+
+        if state is None and isinstance(pointer, str) and index_information is not None:
+            # pointer could be something saver knows
+            state = utils.convenience.call(lambda: saver.get(pointer, index_information))
 
         if state is None and default is not None:
             state = default(pointer)
 
-        if getattr(self, state_attribute_name, None) is None:
+        if state is None:
             raise ValueError(f"Could not initialize from {pointer} of type {type(pointer)}")
 
         if state_transformer is not None:

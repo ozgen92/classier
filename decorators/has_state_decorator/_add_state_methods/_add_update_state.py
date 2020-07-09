@@ -27,7 +27,7 @@ def _add_update_state(some_class, options):
             file_path = os.path.join(path, state_id)
 
         index_information = index(state_id, type(self), index_path)
-        saved_state = saver.get(state, file_path, index_information)
+        saved_state = saver.get(file_path, index_information)
         if saved_state is not None:
             setattr(self, state_attribute_name, saved_state)
 
